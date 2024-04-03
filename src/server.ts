@@ -5,6 +5,7 @@ import express from 'express';
 import morgan from 'morgan';
 
 import { PORT } from './config.js';
+import adsRouter from './routes/adsRouter.js';
 import userRouter from './routes/usersRouter.js';
 
 const port = PORT || 5005;
@@ -14,11 +15,12 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(cors());
 
+app.use('/api/v1/users', userRouter);
+app.use('/api/v1/ads', adsRouter);
+
 app.get('/', (_req, res) => {
   res.json({ msg: 'server is running' });
 });
-
-app.use('/api/v1/users', userRouter);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Path not found', path: req.url });
