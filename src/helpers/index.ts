@@ -4,9 +4,9 @@ import { dbConfigRemote } from '../config.js';
 
 type QueryRes<T> = [T, null] | [null, Error];
 
-export const DbQuery = async <T>(
+export const dbQuery = async <T>(
   sql: string,
-  valuesArr: (string | number)[] = []
+  valuesArr: (string | number | boolean | Type)[] = []
 ): Promise<QueryRes<T>> => {
   let conn;
   try {
