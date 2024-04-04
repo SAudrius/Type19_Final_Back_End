@@ -5,7 +5,7 @@ import { dbQuery, sendJsonError } from '../helpers/index.js';
 
 const townsRouter = express.Router();
 
-townsRouter.get('/', async (req, res) => {
+townsRouter.get('/', async (_req, res) => {
   const sql = 'SELECT * FROM towns WHERE is_deleted = 0';
   const [rows, error] = await dbQuery<Town[]>(sql);
   if (error) {
