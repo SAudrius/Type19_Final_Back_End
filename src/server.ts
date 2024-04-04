@@ -6,6 +6,7 @@ import morgan from 'morgan';
 
 import { PORT } from './config.js';
 import adsRouter from './routes/adsRouter.js';
+import townsRouter from './routes/townsRouter.js';
 import userRouter from './routes/usersRouter.js';
 
 const port = PORT || 5005;
@@ -17,6 +18,7 @@ app.use(cors());
 
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/ads', adsRouter);
+app.use('/api/v1/towns', townsRouter);
 
 app.get('/', (_req, res) => {
   res.json({ msg: 'server is running' });
