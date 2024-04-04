@@ -1,12 +1,13 @@
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  password: string;
-  created_at: number;
-  avatar_url: string;
-  is_deleted: string;
+interface UserId {
+  user_id: number;
 }
+
+enum Type {
+  sell,
+  buy,
+  rent,
+}
+
 interface Ads {
   id: number;
   title: string;
@@ -20,14 +21,22 @@ interface Ads {
   category_id: number;
   created_at: string;
   is_published: boolean;
+  is_deleted: 0 | 1;
 }
 
-interface UserId {
-  user_id: number;
+interface Town {
+  id: number;
+  name: string;
+  population: number;
+  area: number;
+  is_deleted: 0 | 1;
 }
-
-enum Type {
-  sell,
-  buy,
-  rent,
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+  created_at: number;
+  avatar_url: string;
+  is_deleted: 0 | 1;
 }
