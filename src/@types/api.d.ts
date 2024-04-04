@@ -22,6 +22,10 @@ interface Ads {
   is_published: boolean;
 }
 
+interface UserId {
+  user_id: number;
+}
+
 enum Type {
   sell,
   buy,
