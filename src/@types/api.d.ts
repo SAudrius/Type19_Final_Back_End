@@ -40,3 +40,8 @@ interface User {
   avatar_url: string;
   is_deleted: 0 | 1;
 }
+
+interface Category {
+  id: number;
+  name: string;
+}
