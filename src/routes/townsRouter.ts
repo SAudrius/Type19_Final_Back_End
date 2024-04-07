@@ -1,7 +1,9 @@
 import express from 'express';
 import { ResultSetHeader } from 'mysql2';
 
-import { dbQuery, sendJsonError } from '../helpers/index.js';
+import verifyToken from '../middleware/authMiddleware.js';
+import { dbQuery, sendJsonError } from '../utils/helper.js';
+import authRouter from './authRouter.js';
 
 const townsRouter = express.Router();
 
@@ -27,7 +29,7 @@ townsRouter.get('/:id', async (req, res) => {
   res.json(rows);
 });
 
-townsRouter.post('/', async (req, res) => {
+townsRouter.post('/', verifyToken, async (req, res) => {
   const { name, area, population } = req.body as Town;
   const dbParams = [name, area, population];
   const sql = 'INSERT INTO towns (name, population, area) VALUES (?,?,?)';

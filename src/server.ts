@@ -1,23 +1,25 @@
 import 'dotenv/config';
 
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import morgan from 'morgan';
 
 import { PORT } from './config.js';
 import adsRouter from './routes/adsRouter.js';
+import authRouter from './routes/authRouter.js';
 import categoriesRouter from './routes/categoriesRouter.js';
 import townsRouter from './routes/townsRouter.js';
-import userRouter from './routes/usersRouter.js';
 
 const port = PORT || 5005;
 const app = express();
 
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors());
 
-app.use('/api/v1/users', userRouter);
+app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/ads', adsRouter);
 app.use('/api/v1/towns', townsRouter);
 app.use('/api/v1/categories', categoriesRouter);

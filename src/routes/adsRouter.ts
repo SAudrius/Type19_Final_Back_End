@@ -1,7 +1,7 @@
 import express from 'express';
 import { ResultSetHeader } from 'mysql2';
 
-import { dbQuery, sendJsonError } from '../helpers/index.js';
+import { dbQuery, sendJsonError } from '../utils/helper.js';
 
 const adsRouter = express.Router();
 
