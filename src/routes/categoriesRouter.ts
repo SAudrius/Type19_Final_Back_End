@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { dbQuery, sendJsonError } from '../helpers/index.js';
+import { dbQuery, sendJsonError } from '../utils/helper.js';
 
 const categoriesRouter = express.Router();
 

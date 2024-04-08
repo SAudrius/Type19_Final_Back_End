@@ -45,3 +45,9 @@ interface Category {
   id: number;
   name: string;
 }
+
+interface JwtDecodedToken {
+  exp: number;
+  user_id: number;
+  iat: number;
+}
