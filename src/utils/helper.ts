@@ -14,6 +14,7 @@ export const dbQuery = async <T>(
     conn = await mysql.createConnection(dbConfigRemote);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [res, _fields] = await conn.execute(sql, valuesArr);
+    console.log('res ===', res);
     return [res as T, null];
   } catch (err) {
     console.log(err);
