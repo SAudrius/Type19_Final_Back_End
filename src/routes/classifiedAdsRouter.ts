@@ -3,11 +3,11 @@ import { ResultSetHeader } from 'mysql2';
 
 import { dbQuery, sendJsonError } from '../utils/helper.js';
 
-const adsRouter = express.Router();
+const classifiedAdsRouter = express.Router();
 
-adsRouter.get('/', async (_req, res) => {
+classifiedAdsRouter.get('/', async (_req, res) => {
   const sql = 'SELECT * FROM ads WHERE is_published = 1 AND is_deleted = 0';
-  const [rows, error] = await dbQuery<Ads[]>(sql);
+  const [rows, error] = await dbQuery<ClassifiedAd[]>(sql);
   if (error) {
     sendJsonError(res);
     return;
@@ -15,25 +15,42 @@ adsRouter.get('/', async (_req, res) => {
   res.json(rows);
 });
 
-adsRouter.get('/:id', async (req, res) => {
+classifiedAdsRouter.get('/:id', async (req, res) => {
   const userId = req.params.id;
   const sql =
     'SELECT * FROM ads WHERE id = ? AND is_published = 1 AND is_deleted = 0';
   const dbParams = [userId];
-  const [rows, error] = await dbQuery<Ads[]>(sql, dbParams);
+  const [rows, error] = await dbQuery<ClassifiedAd[]>(sql, dbParams);
   if (error) {
     sendJsonError(res);
     return;
   }
   console.log('rows.length ===', rows.length);
   if (rows.length < 1) {
-    sendJsonError(res, 404, { message: 'User does not have any ads' });
+    sendJsonError(res, 404, { message: 'Do not exist' });
+    return;
+  }
+  res.json(rows[0]);
+});
+classifiedAdsRouter.get('/town/:id', async (req, res) => {
+  const userId = req.params.id;
+  const sql =
+    'SELECT * FROM ads WHERE town_id = ? AND is_published = 1 AND is_deleted = 0';
+  const dbParams = [userId];
+  const [rows, error] = await dbQuery<ClassifiedAd[]>(sql, dbParams);
+  if (error) {
+    sendJsonError(res);
+    return;
+  }
+  console.log('rows.length ===', rows.length);
+  if (rows.length < 1) {
+    sendJsonError(res, 204, { message: 'No results found' });
     return;
   }
   res.json(rows);
 });
 
-adsRouter.post('/', async (req, res) => {
+classifiedAdsRouter.post('/', async (req, res) => {
   const {
     title,
     main_image_url,
@@ -70,7 +87,7 @@ adsRouter.post('/', async (req, res) => {
   res.json({ id: rows.insertId, ...req.body });
 });
 
-adsRouter.delete('/:id', async (req, res) => {
+classifiedAdsRouter.delete('/:id', async (req, res) => {
   const adId = req.params.id;
   const { user_id: userId } = req.body;
   const dbParams1 = [adId];
@@ -101,4 +118,4 @@ adsRouter.delete('/:id', async (req, res) => {
   res.sendStatus(200);
 });
 
-export default adsRouter;
+export default classifiedAdsRouter;

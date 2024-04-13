@@ -6,9 +6,10 @@ import express from 'express';
 import morgan from 'morgan';
 
 import { PORT } from './config.js';
-import adsRouter from './routes/adsRouter.js';
 import authRouter from './routes/authRouter.js';
 import categoriesRouter from './routes/categoriesRouter.js';
+import classifiedAdsRouter from './routes/classifiedAdsRouter.js';
+import searchRouter from './routes/searchRouter.js';
 import townsRouter from './routes/townsRouter.js';
 
 const port = PORT || 5005;
@@ -20,9 +21,10 @@ app.use(cookieParser());
 app.use(cors());
 
 app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/ads', adsRouter);
+app.use('/api/v1/classified-ads', classifiedAdsRouter);
 app.use('/api/v1/towns', townsRouter);
 app.use('/api/v1/categories', categoriesRouter);
+app.use('/api/v1/search', searchRouter);
 
 app.get('/', (_req, res) => {
   res.json({ msg: 'server is running' });
