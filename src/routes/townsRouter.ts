@@ -3,7 +3,6 @@ import { ResultSetHeader } from 'mysql2';
 
 import verifyToken from '../middleware/authMiddleware.js';
 import { dbQuery, sendJsonError } from '../utils/helper.js';
-import authRouter from './authRouter.js';
 
 const townsRouter = express.Router();
 
@@ -26,7 +25,7 @@ townsRouter.get('/:id', async (req, res) => {
     sendJsonError(res);
     return;
   }
-  res.json(rows);
+  res.json(rows[0]);
 });
 
 townsRouter.post('/', verifyToken, async (req, res) => {
