@@ -8,7 +8,7 @@ enum Type {
   rent,
 }
 
-interface Ads {
+interface ClassifiedAd {
   id: number;
   title: string;
   main_image_url: string;
@@ -50,4 +50,8 @@ interface JwtDecodedToken {
   exp: number;
   user_id: number;
   iat: number;
+}
+
+interface CountResult {
+  count: number;
 }
