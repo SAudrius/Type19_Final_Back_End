@@ -7,7 +7,7 @@ const classifiedAdsRouter = express.Router();
 
 classifiedAdsRouter.get('/', async (_req, res) => {
   const sql = 'SELECT * FROM ads WHERE is_published = 1 AND is_deleted = 0';
-  const [rows, error] = await dbQuery<Ads[]>(sql);
+  const [rows, error] = await dbQuery<ClassifiedAd[]>(sql);
   if (error) {
     sendJsonError(res);
     return;
@@ -20,7 +20,7 @@ classifiedAdsRouter.get('/:id', async (req, res) => {
   const sql =
     'SELECT * FROM ads WHERE id = ? AND is_published = 1 AND is_deleted = 0';
   const dbParams = [userId];
-  const [rows, error] = await dbQuery<Ads[]>(sql, dbParams);
+  const [rows, error] = await dbQuery<ClassifiedAd[]>(sql, dbParams);
   if (error) {
     sendJsonError(res);
     return;
@@ -31,6 +31,23 @@ classifiedAdsRouter.get('/:id', async (req, res) => {
     return;
   }
   res.json(rows[0]);
+});
+classifiedAdsRouter.get('/town/:id', async (req, res) => {
+  const userId = req.params.id;
+  const sql =
+    'SELECT * FROM ads WHERE town_id = ? AND is_published = 1 AND is_deleted = 0';
+  const dbParams = [userId];
+  const [rows, error] = await dbQuery<ClassifiedAd[]>(sql, dbParams);
+  if (error) {
+    sendJsonError(res);
+    return;
+  }
+  console.log('rows.length ===', rows.length);
+  if (rows.length < 1) {
+    sendJsonError(res, 204, { message: 'No results found' });
+    return;
+  }
+  res.json(rows);
 });
 
 classifiedAdsRouter.post('/', async (req, res) => {
