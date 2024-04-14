@@ -5,7 +5,6 @@ import { dbQuery } from '../utils/helper.js';
 const searchRouter = express.Router();
 
 searchRouter.post('/', async (req, res) => {
-  console.log('body', req.body);
   const { search, town, category, sort } = req.body;
   const dbParams: [string | number] = [`${search}%`];
   try {
@@ -39,7 +38,6 @@ searchRouter.post('/', async (req, res) => {
 });
 
 searchRouter.post('/count', async (req, res) => {
-  console.log('body', req.body);
   const { search, town, category, sort } = req.body;
   const dbParams: [string | number] = [`${search}%`];
   try {

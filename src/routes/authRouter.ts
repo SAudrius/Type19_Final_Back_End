@@ -38,21 +38,23 @@ authRouter.post('/register', async (req, res) => {
       { user_id: rows.insertId, exp: refreshTokenExpires },
       REFRESH_KEY
     );
-
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+    // res.setHeader('Authorization', `Bearer ${jwtToken}`)
+    // res.cookie('refreshToken', refreshToken, {
+    //   maxAge: 7 * 24 * 60 * 60 * 1000,
+    // })
+    res.json({
+      message: 'register success',
+      token: jwtToken,
+      refreshToken: refreshToken,
     });
-    res.setHeader('Authorization', `Bearer ${jwtToken}`);
   } catch (err) {
     sendJsonError(res);
     return;
   }
-  res.json({ message: 'register success' });
 });
 
 authRouter.post('/login', async (req, res) => {
+  console.log('req.body ===', req.body);
   const { email, password } = req.body as User;
   const dbParams = [email, 0];
   const sql = 'SELECT * FROM USERS WHERE email = ? AND is_deleted = ?';
@@ -87,18 +89,21 @@ authRouter.post('/login', async (req, res) => {
     REFRESH_KEY
   );
 
-  res.cookie('refreshToken', refreshToken, {
-    httpOnly: true,
-    secure: true,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+  // res.cookie('refreshToken', refreshToken, {
+  //   httpOnly: true,
+  //   secure: true,
+  //   maxAge: 7 * 24 * 60 * 60 * 1000,
+  // });
+  // res.setHeader('Authorization', `Bearer ${jwtToken}`);
+  res.json({
+    message: 'register success',
+    token: jwtToken,
+    refreshToken: refreshToken,
   });
-  res.setHeader('Authorization', `Bearer ${jwtToken}`);
-
-  res.json({ message: 'login success' });
 });
 
 authRouter.post('/refresh', async (req, res) => {
-  const refreshToken = req.cookies['refreshToken'];
+  const { refreshToken } = req.body;
   if (!refreshToken) {
     sendJsonError(res, 401, { message: 'no refresh token' });
     return;
@@ -115,13 +120,11 @@ authRouter.post('/refresh', async (req, res) => {
       { user_id: decoded.user_id, exp: accessTokenExpires },
       SECRET_KEY
     );
-    res.setHeader('Authorization', `Bearer ${jwtToken}`);
+    res.json({ message: 'Register success', token: jwtToken });
   } catch {
     sendJsonError(res, 400, { message: 'invalid refresh token' });
     return;
   }
-
-  res.json({ message: 'Register success' });
 });
 
 export default authRouter;

@@ -1,7 +1,7 @@
 import express from 'express';
 import { ResultSetHeader } from 'mysql2';
 
-import { dbQuery, sendJsonError } from '../utils/helper.js';
+import { dbQuery, sendJsonError, userIdByToken } from '../utils/helper.js';
 
 const classifiedAdsRouter = express.Router();
 
@@ -25,24 +25,45 @@ classifiedAdsRouter.get('/:id', async (req, res) => {
     sendJsonError(res);
     return;
   }
-  console.log('rows.length ===', rows.length);
   if (rows.length < 1) {
     sendJsonError(res, 404, { message: 'Do not exist' });
     return;
   }
   res.json(rows[0]);
 });
+
 classifiedAdsRouter.get('/town/:id', async (req, res) => {
-  const userId = req.params.id;
+  const townId = req.params.id;
   const sql =
     'SELECT * FROM ads WHERE town_id = ? AND is_published = 1 AND is_deleted = 0';
+  const dbParams = [townId];
+  const [rows, error] = await dbQuery<ClassifiedAd[]>(sql, dbParams);
+  if (error) {
+    sendJsonError(res);
+    return;
+  }
+  if (rows.length < 1) {
+    sendJsonError(res, 204, { message: 'No results found' });
+    return;
+  }
+  res.json(rows);
+});
+
+classifiedAdsRouter.post('/user', async (req, res) => {
+  const { token } = req.body;
+  const userId = userIdByToken(token);
+  if (!userId) {
+    sendJsonError(res);
+    return;
+  }
+  const sql =
+    'SELECT * FROM ads WHERE user_id = ? AND is_published = 1 AND is_deleted = 0';
   const dbParams = [userId];
   const [rows, error] = await dbQuery<ClassifiedAd[]>(sql, dbParams);
   if (error) {
     sendJsonError(res);
     return;
   }
-  console.log('rows.length ===', rows.length);
   if (rows.length < 1) {
     sendJsonError(res, 204, { message: 'No results found' });
     return;
@@ -63,6 +84,11 @@ classifiedAdsRouter.post('/', async (req, res) => {
     category_id,
     created_at,
     is_published,
+    image_main,
+    image_1,
+    image_2,
+    image_3,
+    image_4,
   } = req.body;
   const dbParams = [
     title,
@@ -76,7 +102,13 @@ classifiedAdsRouter.post('/', async (req, res) => {
     category_id,
     created_at,
     is_published,
+    image_main,
+    image_1,
+    image_2,
+    image_3,
+    image_4,
   ];
+  console.log('dbParams ===', dbParams);
   const sql =
     'INSERT INTO ads (title, main_image_url, description, price, phone, type, town_id, user_id, category_id, created_at, is_published) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
   const [rows, error] = await dbQuery<ResultSetHeader>(sql, dbParams);

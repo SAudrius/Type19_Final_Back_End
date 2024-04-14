@@ -6,6 +6,7 @@ import { sendJsonError } from '../utils/helper.js';
 
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   const BearerToken = req.headers.authorization;
+  console.log('BearerToken ===', BearerToken);
   if (!BearerToken) {
     sendJsonError(res, 400, { message: 'token is not found' });
     return;
@@ -25,8 +26,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     console.log('not expired');
   } catch {
     // err
-    sendJsonError(res, 401, { message: '' });
-    sendJsonError(res, 400, { message: 'token is expired' });
+    sendJsonError(res, 204, { message: 'token is expired' });
     return;
   }
 
