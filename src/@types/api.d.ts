@@ -22,6 +22,11 @@ interface ClassifiedAd {
   created_at: string;
   is_published: boolean;
   is_deleted: 0 | 1;
+  image_main: string;
+  image_1: string;
+  image_2: string;
+  image_3: string;
+  image_4: string;
 }
 
 interface Town {
