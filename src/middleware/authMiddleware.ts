@@ -16,6 +16,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     return;
   }
   const token = BearerToken?.slice(7);
+  console.log('token ===', token);
   try {
     const decoded = jwt.verify(token, SECRET_KEY) as JwtDecodedToken;
     const today = Date.now();
@@ -29,7 +30,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     sendJsonError(res, 204, { message: 'token is expired' });
     return;
   }
-
+  req.body.token = token;
   next();
 };
 
