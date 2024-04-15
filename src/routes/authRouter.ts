@@ -16,15 +16,16 @@ authRouter.post('/register', validateRegister, async (req, res) => {
   const { name, password, email, avatar_url: avatarUrl } = req.body as User;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const sql = 'SELECT * WHERE email = ?';
+    const sql = 'SELECT * FROM users WHERE email = ?';
     const dbParams = [email];
     const [rows, error] = await dbQuery<User[]>(sql, dbParams);
-
     if (error) {
       sendJsonError(res);
+      return;
     }
     if (rows && rows.length > 0) {
       sendJsonError(res, 401);
+      return;
     }
 
     const sql2 =

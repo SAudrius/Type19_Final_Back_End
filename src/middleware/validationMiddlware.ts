@@ -30,7 +30,6 @@ export const validateRegister = (
   const { error } = registerSchema.validate(req.body, {
     abortEarly: false,
   });
-
   if (error) {
     sendJsonError(res, 400, {
       message: 'Validation error',
