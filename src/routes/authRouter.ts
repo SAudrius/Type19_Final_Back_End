@@ -3,12 +3,16 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import { ResultSetHeader } from 'mysql2';
 
+import {
+  validateLogin,
+  validateRegister,
+} from '../middleware/validationMiddlware.js';
 import { REFRESH_KEY, SECRET_KEY } from '../utils/constants.js';
 import { dbQuery, sendJsonError } from '../utils/helper.js';
 
 const authRouter = express.Router();
 
-authRouter.post('/register', async (req, res) => {
+authRouter.post('/register', validateRegister, async (req, res) => {
   const { name, password, email, avatar_url: avatarUrl } = req.body as User;
 
   try {
@@ -38,10 +42,6 @@ authRouter.post('/register', async (req, res) => {
       { user_id: rows.insertId, exp: refreshTokenExpires },
       REFRESH_KEY
     );
-    // res.setHeader('Authorization', `Bearer ${jwtToken}`)
-    // res.cookie('refreshToken', refreshToken, {
-    //   maxAge: 7 * 24 * 60 * 60 * 1000,
-    // })
     res.json({
       message: 'register success',
       token: jwtToken,
@@ -53,7 +53,7 @@ authRouter.post('/register', async (req, res) => {
   }
 });
 
-authRouter.post('/login', async (req, res) => {
+authRouter.post('/login', validateLogin, async (req, res) => {
   const { email, password } = req.body as User;
   const dbParams = [email, 0];
   const sql = 'SELECT * FROM USERS WHERE email = ? AND is_deleted = ?';

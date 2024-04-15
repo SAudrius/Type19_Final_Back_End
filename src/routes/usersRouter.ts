@@ -30,8 +30,6 @@ usersRouter.put(
   verifyToken,
   async (req, res) => {
     const { name, email, avatarUrl, password, user_id } = req.body;
-    console.log('req.body ===', req.body);
-    console.log('password ===', password);
     if (!user_id || !email || !avatarUrl) {
       sendJsonError(res);
       return;

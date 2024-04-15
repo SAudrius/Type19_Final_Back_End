@@ -16,3 +16,15 @@ export const postClassifiedAdSchema = Joi.object({
   image_4: Joi.string().required(),
   isPublished: Joi.number().required(),
 });
+
+export const registerSchema = Joi.object({
+  name: Joi.string().required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().required().min(6),
+  avatar_url: Joi.string().allow('', null),
+});
+
+export const loginSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().required().min(6),
+});

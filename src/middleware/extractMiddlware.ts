@@ -28,7 +28,6 @@ export const extractUserIdFromToken = (
 
   try {
     if (!process.env.JWT_SECRET) {
-      console.log('@no ENV');
       throw new Error('No jwt secret found');
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtToken;

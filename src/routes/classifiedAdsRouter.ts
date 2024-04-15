@@ -54,9 +54,9 @@ classifiedAdsRouter.get('/town/:id', async (req, res) => {
 
 classifiedAdsRouter.post('/user', verifyToken, async (req, res) => {
   const { token } = req.body;
-  console.log('token ===', token);
+
   const userId = userIdByToken(token);
-  console.log('userId ===', userId);
+
   if (!userId) {
     sendJsonError(res);
     return;
@@ -64,7 +64,7 @@ classifiedAdsRouter.post('/user', verifyToken, async (req, res) => {
   const sql = 'SELECT * FROM ads WHERE user_id = ? AND is_deleted = 0';
   const dbParams = [userId];
   const [rows, error] = await dbQuery<ClassifiedAd[]>(sql, dbParams);
-  console.log('rows ===', rows);
+
   if (error) {
     sendJsonError(res);
     return;
@@ -79,9 +79,9 @@ classifiedAdsRouter.post('/user', verifyToken, async (req, res) => {
 classifiedAdsRouter.patch('/public/:id', verifyToken, async (req, res) => {
   const { token } = req.body;
   const id = req.params.id;
-  console.log('token ===', token);
+
   const userId = userIdByToken(token);
-  console.log('userId ===', userId);
+
   if (!userId) {
     sendJsonError(res);
     return;
@@ -90,7 +90,7 @@ classifiedAdsRouter.patch('/public/:id', verifyToken, async (req, res) => {
     'UPDATE ads SET is_published = NOT is_published WHERE id = ? AND user_id = ?';
   const dbParams = [id, userId];
   const [rows, error] = await dbQuery<ClassifiedAd[]>(sql, dbParams);
-  console.log('rows ===', rows);
+
   if (error) {
     sendJsonError(res);
     return;
@@ -123,7 +123,7 @@ classifiedAdsRouter.post(
       image_3,
       image_4,
     } = req.body;
-    console.log('req.body ===', req.body);
+
     const dbParams = [
       title,
       description,
@@ -144,8 +144,7 @@ classifiedAdsRouter.post(
     const sql =
       'INSERT INTO ads (title, description, price, phone, `type`, town_id, user_id, category_id, image_main, image_1, image_2, image_3, image_4,is_published) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
     const [rows, error] = await dbQuery<ResultSetHeader>(sql, dbParams);
-    console.log('error ===', error);
-    console.log('rows ===', rows);
+
     if (error) {
       sendJsonError(res);
       return;
