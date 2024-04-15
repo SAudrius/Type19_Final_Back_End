@@ -7,9 +7,11 @@ Get started
 3. Add env varibles from env.example
 4. Create db from database folder to mysql and connect to db
 4.1 Create categories towns first then create users and ads
+4.2 insert values from values.sql
 `npm run ts`<br/>
 
 `npm run dev`
+
 
 
 
