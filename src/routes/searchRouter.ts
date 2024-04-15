@@ -5,7 +5,6 @@ import { dbQuery } from '../utils/helper.js';
 const searchRouter = express.Router();
 
 searchRouter.post('/', async (req, res) => {
-  console.log('body', req.body);
   const { search, town, category, sort } = req.body;
   const dbParams: [string | number] = [`${search}%`];
   try {
@@ -20,6 +19,7 @@ searchRouter.post('/', async (req, res) => {
       sql += ' AND category_id = ?';
       dbParams.push(category);
     }
+    sql += ' AND is_deleted = 0 AND is_published = 1';
     if (sort) {
       sql += ' ORDER BY LOWER(ads.title) DESC';
     } else {
@@ -39,7 +39,6 @@ searchRouter.post('/', async (req, res) => {
 });
 
 searchRouter.post('/count', async (req, res) => {
-  console.log('body', req.body);
   const { search, town, category, sort } = req.body;
   const dbParams: [string | number] = [`${search}%`];
   try {
@@ -55,12 +54,14 @@ searchRouter.post('/count', async (req, res) => {
       sql += ' AND category_id = ?';
       dbParams.push(category);
     }
+    sql += ' AND is_deleted = 0 AND is_published = 1';
     if (sort) {
       sql += ' ORDER BY LOWER(ads.title) DESC';
     } else {
       sql += ' ORDER BY LOWER(ads.title) ASC';
     }
-    sql += ' LIMIT 10';
+
+    sql += '  LIMIT 10';
 
     const [rows, err] = await dbQuery<CountResult>(sql, dbParams);
     if (err) {

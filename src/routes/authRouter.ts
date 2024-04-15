@@ -3,12 +3,16 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import { ResultSetHeader } from 'mysql2';
 
+import {
+  validateLogin,
+  validateRegister,
+} from '../middleware/validationMiddlware.js';
 import { REFRESH_KEY, SECRET_KEY } from '../utils/constants.js';
 import { dbQuery, sendJsonError } from '../utils/helper.js';
 
 const authRouter = express.Router();
 
-authRouter.post('/register', async (req, res) => {
+authRouter.post('/register', validateRegister, async (req, res) => {
   const { name, password, email, avatar_url: avatarUrl } = req.body as User;
 
   try {
@@ -38,21 +42,18 @@ authRouter.post('/register', async (req, res) => {
       { user_id: rows.insertId, exp: refreshTokenExpires },
       REFRESH_KEY
     );
-
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+    res.json({
+      message: 'register success',
+      token: jwtToken,
+      refreshToken: refreshToken,
     });
-    res.setHeader('Authorization', `Bearer ${jwtToken}`);
   } catch (err) {
     sendJsonError(res);
     return;
   }
-  res.json({ message: 'register success' });
 });
 
-authRouter.post('/login', async (req, res) => {
+authRouter.post('/login', validateLogin, async (req, res) => {
   const { email, password } = req.body as User;
   const dbParams = [email, 0];
   const sql = 'SELECT * FROM USERS WHERE email = ? AND is_deleted = ?';
@@ -61,9 +62,13 @@ authRouter.post('/login', async (req, res) => {
     sendJsonError(res);
     return;
   }
+  if (rows.length < 1) {
+    sendJsonError(res, 401);
+    return;
+  }
   const passwordValid = await bcrypt.compare(password, rows[0].password);
   if (!passwordValid) {
-    sendJsonError(res);
+    sendJsonError(res, 401);
     return;
   }
   if (
@@ -75,7 +80,7 @@ authRouter.post('/login', async (req, res) => {
     return;
   }
 
-  const accessTokenExpires = Date.now() + 60 * 1000;
+  const accessTokenExpires = Date.now() + 15 * 60 * 1000;
   const refreshTokenExpires = Date.now() + 7 * 24 * 60 * 60 * 1000;
 
   const jwtToken = jwt.sign(
@@ -87,18 +92,15 @@ authRouter.post('/login', async (req, res) => {
     REFRESH_KEY
   );
 
-  res.cookie('refreshToken', refreshToken, {
-    httpOnly: true,
-    secure: true,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+  res.json({
+    message: 'register success',
+    token: jwtToken,
+    refreshToken: refreshToken,
   });
-  res.setHeader('Authorization', `Bearer ${jwtToken}`);
-
-  res.json({ message: 'login success' });
 });
 
 authRouter.post('/refresh', async (req, res) => {
-  const refreshToken = req.cookies['refreshToken'];
+  const { refreshToken } = req.body;
   if (!refreshToken) {
     sendJsonError(res, 401, { message: 'no refresh token' });
     return;
@@ -107,7 +109,7 @@ authRouter.post('/refresh', async (req, res) => {
     if (typeof SECRET_KEY !== 'string' || typeof REFRESH_KEY !== 'string') {
       throw new Error('server error');
     }
-    const accessTokenExpires = Date.now() + 60 * 1000;
+    const accessTokenExpires = Date.now() + 15 * 60 * 1000;
 
     const decoded = jwt.verify(refreshToken, SECRET_KEY) as JwtDecodedToken;
 
@@ -115,13 +117,11 @@ authRouter.post('/refresh', async (req, res) => {
       { user_id: decoded.user_id, exp: accessTokenExpires },
       SECRET_KEY
     );
-    res.setHeader('Authorization', `Bearer ${jwtToken}`);
+    res.json({ message: 'Register success', token: jwtToken });
   } catch {
     sendJsonError(res, 400, { message: 'invalid refresh token' });
     return;
   }
-
-  res.json({ message: 'Register success' });
 });
 
 export default authRouter;

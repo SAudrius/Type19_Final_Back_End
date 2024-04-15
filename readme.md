@@ -3,7 +3,8 @@
 Get started
 
 1. Add Variables for db
-2. If localhost change to dbConfig not dbConfigremote 
+2. If localhost database change to dbConfig not dbConfigremote in config.ts dir
+3. Add env varibles from env.example
 
 `npm run ts`<br/>
 
