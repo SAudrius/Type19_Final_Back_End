@@ -48,6 +48,7 @@ export const validateLogin = (
   const { error } = loginSchema.validate(req.body, {
     abortEarly: false,
   });
+  console.log('error ===', error);
   if (error) {
     sendJsonError(res, 400, {
       message: 'Validation error',

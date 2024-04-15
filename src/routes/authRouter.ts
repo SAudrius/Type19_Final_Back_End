@@ -62,9 +62,13 @@ authRouter.post('/login', validateLogin, async (req, res) => {
     sendJsonError(res);
     return;
   }
+  if (rows.length < 1) {
+    sendJsonError(res, 401);
+    return;
+  }
   const passwordValid = await bcrypt.compare(password, rows[0].password);
   if (!passwordValid) {
-    sendJsonError(res);
+    sendJsonError(res, 401);
     return;
   }
   if (
