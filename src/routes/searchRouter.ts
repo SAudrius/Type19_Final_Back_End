@@ -19,6 +19,7 @@ searchRouter.post('/', async (req, res) => {
       sql += ' AND category_id = ?';
       dbParams.push(category);
     }
+    sql += ' AND is_deleted = 0 AND is_published = 1';
     if (sort) {
       sql += ' ORDER BY LOWER(ads.title) DESC';
     } else {
@@ -53,12 +54,14 @@ searchRouter.post('/count', async (req, res) => {
       sql += ' AND category_id = ?';
       dbParams.push(category);
     }
+    sql += ' AND is_deleted = 0 AND is_published = 1';
     if (sort) {
       sql += ' ORDER BY LOWER(ads.title) DESC';
     } else {
       sql += ' ORDER BY LOWER(ads.title) ASC';
     }
-    sql += ' LIMIT 10';
+
+    sql += '  LIMIT 10';
 
     const [rows, err] = await dbQuery<CountResult>(sql, dbParams);
     if (err) {
