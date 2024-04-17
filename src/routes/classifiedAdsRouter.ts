@@ -156,9 +156,9 @@ classifiedAdsRouter.post(
 classifiedAdsRouter.delete('/:id', extractUserIdFromToken, async (req, res) => {
   const adId = req.params.id;
   const { user_id: userId } = req.body;
-  const dbParams1 = [adId];
-  const sql1 = 'SELECT * FROM ads WHERE id = ?';
-  const [rows1, error1] = await dbQuery<UserId[]>(sql1, dbParams1);
+  const dbParams = [adId, userId];
+  const sql = 'SELECT * FROM ads WHERE id = ? AND user_id = ?';
+  const [rows1, error1] = await dbQuery<UserId[]>(sql, dbParams);
   if (error1) {
     sendJsonError(res);
     return;
@@ -172,10 +172,10 @@ classifiedAdsRouter.delete('/:id', extractUserIdFromToken, async (req, res) => {
     sendJsonError(res, 405, { message: 'Can not delete other users ads' });
     return;
   }
-  const sql = 'UPDATE ads SET is_deleted = 1 WHERE id = ?';
-  const dbParams = [adId];
+  const sql2 = 'UPDATE ads SET is_deleted = 1 WHERE id = ?';
+  const dbParams2 = [adId];
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_rows, error] = await dbQuery<ResultSetHeader>(sql, dbParams);
+  const [_rows, error] = await dbQuery<ResultSetHeader>(sql2, dbParams2);
 
   if (error) {
     sendJsonError(res);
